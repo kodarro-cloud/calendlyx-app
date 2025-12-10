@@ -104,7 +104,7 @@ export const AdminRequestsPage = () => {
               <h3 className="text-lg font-semibold text-slate-800 mb-4">🔔 Pending Requests ({pendingRequests.length})</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {pendingRequests.map((request) => (
-                  <div key={request.id} className="bg-gradient-to-br from-yellow-50 to-orange-50 border-l-4 border-l-yellow-400 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
+                  <div key={request.id} className="bg-blue-50/60 border-l-4 border-l-blue-400 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
                     <div className="flex flex-col gap-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
@@ -143,13 +143,13 @@ export const AdminRequestsPage = () => {
                         </div>
                         
                         {request.description && (
-                          <div className="mt-2 p-2 bg-white/60 rounded border border-yellow-200">
+                          <div className="mt-2 p-2 bg-white/60 rounded border border-blue-200">
                             <p className="text-xs text-slate-700 line-clamp-2">{request.description}</p>
                           </div>
                         )}
                       </div>
                       
-                      <div className="flex gap-2 pt-2 border-t border-yellow-200">
+                      <div className="flex gap-2 pt-2 border-t border-blue-200">
                         <button
                           onClick={() => request.id && handleApprove(request)}
                           disabled={processingId === request.id}
@@ -194,9 +194,7 @@ export const AdminRequestsPage = () => {
               <h3 className="text-lg font-semibold text-slate-800 mb-4">✓ Reviewed Requests ({reviewedRequests.length})</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {reviewedRequests.map((request) => (
-                  <div key={request.id} className={`rounded-lg p-3 border-l-4 shadow-sm hover:shadow-md transition-all duration-200 ${
-                    request.status === 'approved' ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-green-500' : 'bg-gradient-to-r from-red-50 to-rose-50 border-l-red-500'
-                  }`}>
+                  <div key={request.id} className="bg-blue-50/60 rounded-lg p-3 border-l-4 border-l-blue-400 shadow-sm hover:shadow-md transition-all duration-200">
                     <div className="flex flex-col gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
