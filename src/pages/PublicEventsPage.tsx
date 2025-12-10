@@ -100,7 +100,13 @@ export const PublicEventsPage = () => {
                   {todayActivities.slice(0, 5).map((activity) => (
                     <div key={activity.id} className="bg-green-50 p-3 rounded-lg border border-green-200">
                       <p className="font-semibold text-gray-900 text-sm truncate">{activity.title}</p>
-                      {activity.type && <p className="text-xs text-purple-600 font-medium">{activity.type}</p>}
+                      {activity.type && activity.type !== activity.title && <p className="text-xs text-purple-600 font-medium">{activity.type}</p>}
+                      <p className="text-xs text-gray-800 font-semibold mt-1">
+                        ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                        {activity.endDate && (
+                          <span> → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+                        )}
+                      </p>
                       {activity.location && <p className="text-xs text-gray-600 mt-1">📍 {activity.location}</p>}
                     </div>
                   ))}
@@ -128,13 +134,17 @@ export const PublicEventsPage = () => {
                   {(showAllUpcoming ? categorized.upcoming : categorized.upcoming.slice(0, 5)).map((activity) => (
                     <div key={activity.id} className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                       <p className="font-semibold text-gray-900 text-sm truncate">{activity.title}</p>
-                      {activity.type && <p className="text-xs text-purple-600 font-medium">{activity.type}</p>}
+                      {activity.type && activity.type !== activity.title && <p className="text-xs text-purple-600 font-medium">{activity.type}</p>}
                       <p className="text-xs text-gray-800 font-semibold mt-1">
+                        📅 {activity.startDate.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                      <p className="text-xs text-gray-600">
                         ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                         {activity.endDate && (
                           <span> → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
                         )}
                       </p>
+                      {activity.location && <p className="text-xs text-gray-600 mt-1">📍 {activity.location}</p>}
                     </div>
                   ))}
                 </div>
@@ -189,22 +199,20 @@ export const PublicEventsPage = () => {
                               }`}>
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <h3 className="font-semibold text-slate-900 text-sm truncate">{activity.title}</h3>
-                                      {activity.type && (
-                                        <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-semibold rounded">
-                                          {activity.type}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <p className="text-xs text-slate-800 font-semibold">
-                                      ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-                                      {activity.endDate && (
-                                        <span> → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
-                                      )}
-                                    </p>
-                                    {activity.location && <p className="text-xs text-slate-600 mt-1">📍 {activity.location}</p>}
+                                    <h3 className="font-bold text-slate-900 text-sm truncate">{activity.type || activity.title}</h3>
+                                    {activity.participant && (
+                                      <p className="text-xs text-slate-500 truncate mt-0.5">👤 {activity.participant}</p>
+                                    )}
                                     {activity.description && <p className="text-xs text-slate-600 mt-1 line-clamp-2">{activity.description}</p>}
+                                    <div className="space-y-0.5 text-xs text-slate-600 mt-1">
+                                      <div className="font-semibold text-slate-800">
+                                        ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                        {activity.endDate && (
+                                          <span> → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+                                        )}
+                                      </div>
+                                      {activity.location && <div className="truncate"><span className="font-medium">📍</span> {activity.location}</div>}
+                                    </div>
                                   </div>
                                   <div className="flex flex-col items-end gap-1">
                                     {isCurrent && <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[10px] font-bold rounded-full">LIVE</span>}
@@ -253,7 +261,12 @@ export const PublicEventsPage = () => {
                                     >
                                       <div className="flex flex-col gap-2">
                                         <div className="flex items-start justify-between gap-2">
-                                          <h4 className="text-sm font-bold text-slate-700 flex-1">{activity.title}</h4>
+                                          <div className="flex-1 min-w-0">
+                                            <h4 className="text-sm font-bold text-slate-700 truncate">{activity.type || activity.title}</h4>
+                                            {activity.participant && (
+                                              <p className="text-xs text-slate-500 truncate">👤 {activity.participant}</p>
+                                            )}
+                                          </div>
                                           {isCurrent && <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[10px] font-bold rounded-full whitespace-nowrap">LIVE</span>}
                                         </div>
                                         {activity.description && (
@@ -263,9 +276,8 @@ export const PublicEventsPage = () => {
                                           <div className="font-semibold text-slate-800">
                                             ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                                           </div>
-                                          {activity.type && <div><span className="font-medium">•</span> {activity.type}</div>}
                                           {activity.location && (
-                                            <div><span className="font-medium">📍</span> {activity.location}</div>
+                                            <div className="truncate"><span className="font-medium">📍</span> {activity.location}</div>
                                           )}
                                         </div>
                                       </div>

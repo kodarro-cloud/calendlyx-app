@@ -82,14 +82,19 @@ export const AdminCalendarPage = () => {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-sm font-bold text-slate-700 truncate">{activity.title}</h4>
+                              <h4 className="text-sm font-bold text-slate-700 truncate">{activity.type || activity.title}</h4>
+                              {activity.participant && (
+                                <p className="text-xs text-slate-500 truncate mt-0.5">👤 {activity.participant}</p>
+                              )}
+                              {activity.description && (
+                                <p className="text-slate-600 text-xs line-clamp-2 mt-1">{activity.description}</p>
+                              )}
                               <div className="space-y-0.5 text-xs text-slate-600 mt-1">
                                 <div className="font-semibold text-slate-800">
                                   ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                                 </div>
-                                {activity.type && <div><span className="font-medium">•</span> {activity.type}</div>}
                                 {activity.location && (
-                                  <div><span className="font-medium">📍</span> {activity.location}</div>
+                                  <div className="truncate"><span className="font-medium">📍</span> {activity.location}</div>
                                 )}
                               </div>
                             </div>
@@ -125,14 +130,19 @@ export const AdminCalendarPage = () => {
                             >
                               <div className="flex items-start justify-between gap-1">
                                 <div className="flex-1 min-w-0">
-                                  <h4 className="text-xs font-bold text-slate-700 truncate">{activity.title}</h4>
+                                  <h4 className="text-xs font-bold text-slate-700 truncate">{activity.type || activity.title}</h4>
+                                  {activity.participant && (
+                                    <p className="text-xs text-slate-500 truncate mt-0.5">👤 {activity.participant}</p>
+                                  )}
+                                  {activity.description && (
+                                    <p className="text-slate-600 text-xs line-clamp-2 mt-0.5">{activity.description}</p>
+                                  )}
                                   <div className="space-y-0 text-[11px] text-slate-600 mt-0.5">
                                     <div className="font-semibold text-slate-800">
                                       ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                                     </div>
-                                    {activity.type && <div><span className="font-medium">•</span> {activity.type}</div>}
                                     {activity.location && (
-                                      <div><span className="font-medium">📍</span> {activity.location}</div>
+                                      <div className="truncate"><span className="font-medium">📍</span> {activity.location}</div>
                                     )}
                                   </div>
                                 </div>
