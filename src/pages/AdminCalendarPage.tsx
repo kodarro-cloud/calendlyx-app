@@ -53,7 +53,7 @@ export const AdminCalendarPage = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
           {/* Calendar Grid */}
-          <div className="lg:col-span-3 bg-white/80 backdrop-blur-sm rounded-xl border-blue-100 h-full overflow-hidden">
+          <div className="lg:col-span-3 bg-white/80 backdrop-blur-sm rounded-xl border-blue-100 h-full max-h-[560px] overflow-hidden">
             <MonthlyCalendar
               activities={activities}
               month={currentDate}
@@ -63,7 +63,7 @@ export const AdminCalendarPage = () => {
           </div>
 
           {/* Activities List Column */}
-          <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-blue-100 h-full max-h-[790px] flex flex-col overflow-hidden">
+          <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-blue-100 h-full max-h-[560px] flex flex-col overflow-hidden">
             <h3 className="text-lg font-bold text-slate-700 mb-4">Activities</h3>
 
             {displayActivities.length === 0 ? (

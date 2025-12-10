@@ -521,9 +521,9 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity, isScheduleReque
         </div>
 
         {/* Right Column: Calendar */}
-        <div className="bg-gradient-to-br from-blue-50 to-teal-50 p-4 rounded-xl border-2 border-blue-200 h-full flex flex-col">
-          <div className="mb-3">
-            <h3 className="text-sm font-bold text-slate-700 mb-1">Select Date(s)</h3>
+        <div className="bg-gradient-to-br from-blue-50 to-teal-50 p-3 rounded-xl border-2 border-blue-200 h-full flex flex-col">
+          <div className="mb-2">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-700 mb-1">Select Date(s)</h3>
             <p className="text-xs text-slate-600">
               {!selectedStartDate ? 'Click a date to start' : 
                !selectedEndDate ? 'Click another date to set range' :
@@ -537,7 +537,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity, isScheduleReque
                   setSelectedEndDate(null);
                   setFormData(prev => ({ ...prev, day1Date: '', day2Date: '', day3Date: '' }));
                 }}
-                className="mt-2 text-xs text-red-600 hover:text-red-800 font-medium"
+                className="mt-1.5 text-xs text-red-600 hover:text-red-800 font-medium"
               >
                 Clear Selection
               </button>
@@ -555,13 +555,13 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity, isScheduleReque
               disabled={isLoading}
             />
           </div>
-          <div className="mt-3 text-xs space-y-1">
+          <div className="mt-2 text-xs space-y-1">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-blue-100 border border-blue-200 rounded"></div>
+              <div className="w-3 h-3 bg-blue-100 border border-blue-200 rounded"></div>
               <span className="text-slate-600">Has activities</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-200 border border-green-300 rounded"></div>
+              <div className="w-3 h-3 bg-green-200 border border-green-300 rounded"></div>
               <span className="text-slate-600">Selected range</span>
             </div>
           </div>

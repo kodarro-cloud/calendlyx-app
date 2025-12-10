@@ -74,29 +74,29 @@ export const PublicEventsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50">
-      <div className="bg-gradient-to-r from-slate-500 via-blue-500 to-teal-500 text-white py-8 px-4 sm:px-6 lg:px-8 shadow-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="bg-gradient-to-r from-slate-500 via-blue-500 to-teal-500 text-white py-6 px-4 sm:px-6 lg:px-8 shadow-lg">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Activities</h1>
-            <p className="text-slate-100">Discover what's happening</p>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-2">Activities</h1>
+            <p className="text-slate-100 text-sm sm:text-base">Discover what's happening</p>
           </div>
           <button
             onClick={() => setShowRequestForm(true)}
-            className="bg-white text-blue-600 hover:bg-slate-100 font-semibold py-2 px-6 rounded-lg transition duration-200 shadow-md flex items-center gap-2 whitespace-nowrap"
+            className="bg-white text-blue-600 hover:bg-slate-100 font-semibold py-2 px-4 sm:px-6 rounded-lg transition duration-200 shadow-md flex items-center gap-2 whitespace-nowrap text-sm sm:text-base w-full sm:w-auto justify-center"
           >
-            <Plus size={20} />
-            Request Schedule
+            <Plus size={18} />
+            <span>Request Schedule</span>
           </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-slate-700 mb-4">🔴 Happening Now</h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6 order-2 lg:order-1">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-700 mb-3 sm:mb-4">🔴 Happening Now</h2>
               {todayActivities.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {todayActivities.slice(0, 5).map((activity) => (
                     <div key={activity.id} className="bg-green-50 p-3 rounded-lg border border-green-200">
                       <p className="font-semibold text-gray-900 text-sm truncate">{activity.title}</p>
@@ -111,9 +111,9 @@ export const PublicEventsPage = () => {
               )}
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-slate-700">📅 Upcoming</h2>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-700">📅 Upcoming</h2>
                 {categorized.upcoming.length > 5 && (
                   <button
                     onClick={() => setShowAllUpcoming(!showAllUpcoming)}
@@ -124,7 +124,7 @@ export const PublicEventsPage = () => {
                 )}
               </div>
               {categorized.upcoming.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {(showAllUpcoming ? categorized.upcoming : categorized.upcoming.slice(0, 5)).map((activity) => (
                     <div key={activity.id} className="bg-blue-50 p-3 rounded-lg border border-blue-200">
                       <p className="font-semibold text-gray-900 text-sm truncate">{activity.title}</p>
@@ -143,8 +143,8 @@ export const PublicEventsPage = () => {
               )}
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-slate-700 mb-4">📋 Schedule Requests</h2>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-700 mb-3 sm:mb-4">📋 Schedule Requests</h2>
               {scheduleRequests.filter(r => r.status === 'pending').length > 0 ? (
                 <div className="space-y-2">
                   {scheduleRequests.filter(r => r.status === 'pending').slice(0, 5).map((request) => (
@@ -163,7 +163,7 @@ export const PublicEventsPage = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-3 space-y-6">
+          <div className="lg:col-span-3 space-y-4 sm:space-y-6 order-1 lg:order-2">
             {isLoading && (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 text-center">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -174,13 +174,13 @@ export const PublicEventsPage = () => {
             {!isLoading && !error && (
               <>
                 <MonthlyCalendar activities={activities} onDateClick={setSelectedDate} month={currentMonth} onMonthChange={setCurrentMonth} />
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 sm:p-6">
                   {selectedDate ? (
                     // Daily view
                     <>
-                      <h2 className="text-2xl font-bold text-slate-700 mb-6">{selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h2>
+                      <h2 className="text-xl sm:text-2xl font-bold text-slate-700 mb-4 sm:mb-6">{selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h2>
                       {displayActivities.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                           {displayActivities.map((activity) => {
                             const isCurrent = categorized.current.some(a => a.id === activity.id);
                             return (
@@ -215,32 +215,32 @@ export const PublicEventsPage = () => {
                           })}
                         </div>
                       ) : (
-                        <p className="text-center text-gray-500">No activities on this date</p>
+                        <p className="text-center text-gray-500 text-sm sm:text-base">No activities on this date</p>
                       )}
-                      <button onClick={() => setSelectedDate(null)} className="mt-6 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">Back to Monthly View</button>
+                      <button onClick={() => setSelectedDate(null)} className="mt-4 sm:mt-6 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition text-sm sm:text-base w-full sm:w-auto">Back to Monthly View</button>
                     </>
                   ) : (
                     // Monthly list view
                     <>
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-slate-700">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+                        <h2 className="text-xl sm:text-2xl font-bold text-slate-700">
                           {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} Activities
                         </h2>
                         {monthGroups.length > 6 && (
                           <button
                             onClick={() => setShowAllMonth(!showAllMonth)}
-                            className="text-sm font-semibold text-blue-700 hover:text-blue-900"
+                            className="text-xs sm:text-sm font-semibold text-blue-700 hover:text-blue-900 whitespace-nowrap"
                           >
                             {showAllMonth ? 'Show fewer' : `View all (${monthGroups.length} days)`}
                           </button>
                         )}
                       </div>
                       {monthActivities.length > 0 ? (
-                        <div className="space-y-4">
+                        <div className="space-y-3 sm:space-y-4">
                           {visibleMonthGroups.map(([date, dateActivities]) => (
-                            <div key={date} className="bg-white/70 border border-blue-100 rounded-xl p-4 shadow-sm">
-                              <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-base font-bold text-slate-800">{date}</h3>
+                            <div key={date} className="bg-white/70 border border-blue-100 rounded-xl p-3 sm:p-4 shadow-sm">
+                              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                                <h3 className="text-base sm:text-lg font-bold text-slate-800">{date}</h3>
                                 <span className="text-xs text-slate-500">{dateActivities.length} activit{dateActivities.length === 1 ? 'y' : 'ies'}</span>
                               </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

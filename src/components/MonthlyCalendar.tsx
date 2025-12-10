@@ -78,26 +78,26 @@ export const MonthlyCalendar = ({
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6">
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-2 sm:p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-slate-700">{monthName}</h2>
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mb-2 sm:mb-4">
+        <h2 className="text-sm sm:text-lg font-bold text-slate-700">{monthName}</h2>
+        <div className="flex gap-1">
           <button
             onClick={handlePrevMonth}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition"
+            className="px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs sm:text-sm transition"
           >
             ← Prev
           </button>
           <button
             onClick={handleToday}
-            className="px-4 py-2 bg-gradient-to-r from-blue-400 to-teal-400 hover:from-blue-500 hover:to-teal-500 text-white rounded-lg transition shadow-md"
+            className="px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-gradient-to-r from-blue-400 to-teal-400 hover:from-blue-500 hover:to-teal-500 text-white rounded text-xs sm:text-sm transition shadow-md"
           >
             Today
           </button>
           <button
             onClick={handleNextMonth}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition"
+            className="px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs sm:text-sm transition"
           >
             Next →
           </button>
@@ -105,16 +105,16 @@ export const MonthlyCalendar = ({
       </div>
 
       {/* Day labels */}
-      <div className="grid grid-cols-7 gap-2 mb-4">
+      <div className="grid grid-cols-7 gap-1 mb-2">
         {dayLabels.map((label) => (
-          <div key={label} className="font-semibold text-center text-gray-700 py-2">
+          <div key={label} className="font-semibold text-center text-gray-700 py-0.5 sm:py-1 text-xs sm:text-sm">
             {label}
           </div>
         ))}
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1">
         {days.map((day, index) => {
           const dayActivities = day ? getActivityBadges(day) : [];
           const isToday = day && new Date(month.getFullYear(), month.getMonth(), day).toDateString() === new Date().toDateString();
@@ -127,7 +127,7 @@ export const MonthlyCalendar = ({
                   onDateClick(new Date(month.getFullYear(), month.getMonth(), day));
                 }
               }}
-              className={`min-h-24 p-2 rounded-lg border transition cursor-pointer ${
+              className={`h-20 p-1 rounded border transition cursor-pointer overflow-y-auto ${
                 day
                   ? isToday
                     ? 'bg-blue-50 border-blue-300'
@@ -137,22 +137,22 @@ export const MonthlyCalendar = ({
             >
               {day && (
                 <>
-                  <div className={`font-semibold mb-1 ${isToday ? 'text-blue-600' : 'text-slate-700'}`}>
+                  <div className={`font-bold text-xs mb-0.5 ${isToday ? 'text-blue-600' : 'text-slate-700'}`}>
                     {day}
                   </div>
-                  <div className="space-y-1">
-                    {dayActivities.slice(0, 3).map((activity) => (
+                  <div className="space-y-0.5">
+                    {dayActivities.slice(0, 2).map((activity) => (
                       <div
                         key={activity.id}
-                        className={`text-xs p-1 rounded border truncate ${getEventColor(activity)}`}
+                        className={`text-xs p-0.5 rounded border truncate ${getEventColor(activity)}`}
                         title={`${activity.title} - ${formatActivityDateTime(activity.startDate)}`}
                       >
                         {activity.title}
                       </div>
                     ))}
-                    {dayActivities.length > 3 && (
+                    {dayActivities.length > 2 && (
                       <div className="text-xs text-gray-500 px-1">
-                        +{dayActivities.length - 3} more
+                        +{dayActivities.length - 2}
                       </div>
                     )}
                   </div>
@@ -164,17 +164,17 @@ export const MonthlyCalendar = ({
       </div>
 
       {/* Legend */}
-      <div className="mt-6 flex gap-6 flex-wrap justify-center text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
-          <span>Happening Now</span>
+      <div className="mt-4 flex gap-4 flex-wrap justify-center text-xs">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 bg-green-100 border border-green-300 rounded"></div>
+          <span>Now</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 bg-blue-100 border border-blue-300 rounded"></div>
           <span>Upcoming</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 bg-gray-100 border border-gray-300 rounded"></div>
           <span>Past</span>
         </div>
       </div>
