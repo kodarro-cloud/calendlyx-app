@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { addActivity, updateActivity, subscribeToActivityTypes, type ActivityType, subscribeToParticipants, type Participant, subscribeToDistricts, type District, type Activity, subscribeToActivities } from '../utils/firebaseUtils';
+import { addActivity, updateActivity, subscribeToActivityTypes, type ActivityType, subscribeToParticipants, type Participant, subscribeToDistricts, type District, type Activity, subscribeToActivities, addScheduleRequest } from '../utils/firebaseUtils';
 import { Timestamp } from 'firebase/firestore';
 
 interface AddActivityFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
   activity?: Activity;
+  isScheduleRequest?: boolean;
+  requesterName?: string;
+  requesterPhone?: string;
 }
 
-export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFormProps) => {
+export const AddActivityForm = ({ onSuccess, onCancel, activity, isScheduleRequest = false, requesterName = '', requesterPhone = '' }: AddActivityFormProps) => {
   const [activityTypes, setActivityTypes] = useState<ActivityType[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
@@ -264,34 +268,54 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
         endDate = new Date(`${formData.day3Date}T${formData.day3EndTime}`);
       }
 
-      console.log('AddActivityForm: Submitting activity with:', {
+      console.log('AddActivityForm: Submitting with:', {
         title: activityName.trim(),
         type: activityName.trim(),
         startDate,
         endDate,
         days: eventDays,
+        isScheduleRequest,
       });
 
-      const activityData = {
-        title: activityName.trim(),
-        description: formData.description.trim(),
-        type: activityName.trim(),
-        startDate: Timestamp.fromDate(startDate),
-        endDate: Timestamp.fromDate(endDate),
-        location: formData.location.trim(),
-        participant: formData.participant,
-        district: formData.district,
-        isPublic: formData.isPublic,
-      };
-
-      if (activity && activity.id) {
-        // Edit mode
-        await updateActivity(activity.id, activityData);
-        toast.success('Activity updated successfully!');
+      if (isScheduleRequest) {
+        // Save as schedule request for admin approval
+        const requestData = {
+          title: activityName.trim(),
+          description: formData.description.trim(),
+          type: activityName.trim(),
+          startDate: Timestamp.fromDate(startDate),
+          endDate: Timestamp.fromDate(endDate),
+          location: formData.location.trim(),
+          requesterName: requesterName,
+          requesterPhone: requesterPhone,
+          status: 'pending' as const,
+        };
+        
+        await addScheduleRequest(requestData);
+        toast.success('Schedule request submitted! Waiting for admin approval.');
       } else {
-        // Add mode
-        await addActivity(activityData);
-        toast.success('Activity added successfully!');
+        // Save as regular activity
+        const activityData = {
+          title: activityName.trim(),
+          description: formData.description.trim(),
+          type: activityName.trim(),
+          startDate: Timestamp.fromDate(startDate),
+          endDate: Timestamp.fromDate(endDate),
+          location: formData.location.trim(),
+          participant: formData.participant,
+          district: formData.district,
+          isPublic: formData.isPublic,
+        };
+
+        if (activity && activity.id) {
+          // Edit mode
+          await updateActivity(activity.id, activityData);
+          toast.success('Activity updated successfully!');
+        } else {
+          // Add mode
+          await addActivity(activityData);
+          toast.success('Activity added successfully!');
+        }
       }
 
       setFormData({
@@ -316,8 +340,8 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
 
       if (onSuccess) onSuccess();
     } catch (error) {
-      console.error('Error adding activity:', error);
-      toast.error('Failed to add activity. Please try again.');
+      console.error('Error submitting:', error);
+      toast.error(isScheduleRequest ? 'Failed to submit request. Please try again.' : 'Failed to add activity. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -337,7 +361,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
                 name="activityName"
                 value={formData.activityName}
                 onChange={handleInputChange}
-                className="flex-1 pl-3 pr-14 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm appearance-auto bg-white"
+                className="flex-1 pl-3 pr-10 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat"
                 disabled={isLoading || showCustomType}
               >
                 <option value="">Select activity...</option>
@@ -375,7 +399,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
           {/* Participant */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Participant</label>
-            <select name="participant" value={formData.participant} onChange={handleInputChange} className="w-full pl-3 pr-8 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm appearance-auto bg-white" disabled={isLoading}>
+            <select name="participant" value={formData.participant} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
               <option value="">Select participant (optional)...</option>
               {participants.map((p) => (
                 <option key={p.id} value={p.name}>{p.name}</option>
@@ -386,7 +410,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
           {/* District */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">District</label>
-            <select name="district" value={formData.district} onChange={handleInputChange} className="w-full pl-3 pr-8 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm appearance-auto bg-white" disabled={isLoading}>
+            <select name="district" value={formData.district} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
               <option value="">Select district (optional)...</option>
               {districts.map((d) => (
                 <option key={d.id} value={d.name}>{d.name}</option>
@@ -415,7 +439,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">Start Time *</label>
-                    <select name="day1StartTime" value={formData.day1StartTime} onChange={handleInputChange} className="w-full pl-2 pr-8 py-2 border border-blue-200 rounded text-sm appearance-auto bg-white" disabled={isLoading}>
+                      <select name="day1StartTime" value={formData.day1StartTime} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
                       {timeOptions.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.display}</option>
                       ))}
@@ -423,7 +447,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">End Time *</label>
-                    <select name="day1EndTime" value={formData.day1EndTime} onChange={handleInputChange} className="w-full pl-2 pr-8 py-2 border border-blue-200 rounded text-sm appearance-auto bg-white" disabled={isLoading}>
+                      <select name="day1EndTime" value={formData.day1EndTime} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
                       {timeOptions.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.display}</option>
                       ))}
@@ -441,7 +465,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Start Time *</label>
-                      <select name="day2StartTime" value={formData.day2StartTime} onChange={handleInputChange} className="w-full pl-2 pr-8 py-2 border border-blue-200 rounded text-sm appearance-auto bg-white" disabled={isLoading}>
+                      <select name="day2StartTime" value={formData.day2StartTime} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
                         {timeOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.display}</option>
                         ))}
@@ -449,7 +473,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">End Time *</label>
-                      <select name="day2EndTime" value={formData.day2EndTime} onChange={handleInputChange} className="w-full pl-2 pr-8 py-2 border border-blue-200 rounded text-sm appearance-auto bg-white" disabled={isLoading}>
+                      <select name="day2EndTime" value={formData.day2EndTime} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
                         {timeOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.display}</option>
                         ))}
@@ -468,7 +492,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">Start Time *</label>
-                      <select name="day3StartTime" value={formData.day3StartTime} onChange={handleInputChange} className="w-full pl-2 pr-8 py-2 border border-blue-200 rounded text-sm appearance-auto bg-white" disabled={isLoading}>
+                      <select name="day3StartTime" value={formData.day3StartTime} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
                         {timeOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.display}</option>
                         ))}
@@ -476,7 +500,7 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">End Time *</label>
-                      <select name="day3EndTime" value={formData.day3EndTime} onChange={handleInputChange} className="w-full pl-2 pr-8 py-2 border border-blue-200 rounded text-sm appearance-auto bg-white" disabled={isLoading}>
+                      <select name="day3EndTime" value={formData.day3EndTime} onChange={handleInputChange} className="w-full pl-3 pr-10 py-2 border border-blue-200 rounded-lg text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat" disabled={isLoading}>
                         {timeOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>{opt.display}</option>
                         ))}
@@ -580,12 +604,23 @@ export const AddActivityForm = ({ onSuccess, onCancel, activity }: AddActivityFo
           type="button" 
           onClick={onCancel}
           disabled={isLoading} 
-          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition duration-200"
         >
           {activity ? 'Cancel' : 'Clear'}
         </button>
-        <button type="submit" disabled={isLoading || !selectedStartDate} className="px-4 py-2 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-lg text-sm font-medium">
-          {isLoading ? (activity ? 'Updating...' : 'Adding...') : (activity ? 'Update' : 'Add')}
+        <button 
+          type="submit" 
+          disabled={isLoading || !selectedStartDate} 
+          className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <Loader2 size={16} className="animate-spin" />
+              {isScheduleRequest ? 'Submitting Request...' : (activity ? 'Updating Activity...' : 'Adding Activity...')}
+            </span>
+          ) : (
+            isScheduleRequest ? '📤 Submit Request for Approval' : (activity ? '✏️ Update Activity' : '➕ Add New Activity')
+          )}
         </button>
       </div>
     </form>

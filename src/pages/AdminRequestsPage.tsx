@@ -102,54 +102,83 @@ export const AdminRequestsPage = () => {
           {pendingRequests.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold text-slate-800 mb-4">🔔 Pending Requests ({pendingRequests.length})</h3>
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {pendingRequests.map((request) => (
-                  <div key={request.id} className="bg-yellow-50 border-l-4 border-l-yellow-400 rounded-lg p-4 shadow-sm hover:shadow-md transition">
-                    <div className="flex items-start justify-between gap-4">
+                  <div key={request.id} className="bg-gradient-to-br from-yellow-50 to-orange-50 border-l-4 border-l-yellow-400 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex flex-col gap-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h4 className="text-lg font-bold text-slate-800">{request.title}</h4>
-                          {request.type && (
-                            <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded">
-                              {request.type}
-                            </span>
+                          <h4 className="text-sm font-bold text-slate-800">{request.title}</h4>
+                        </div>
+                        
+                        <div className="space-y-1 text-xs text-slate-700">
+                          <div className="flex items-center gap-1.5">
+                            <span>👤</span>
+                            <span className="font-medium">{request.requesterName}</span>
+                          </div>
+                          
+                          {request.requesterPhone && (
+                            <div className="flex items-center gap-1.5">
+                              <span>📞</span>
+                              <span className="font-medium">{request.requesterPhone}</span>
+                            </div>
+                          )}
+                          
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <span>📅</span>
+                            <span className="font-medium">{request.startDate.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          </div>
+                          
+                          <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                            <span>⏰</span>
+                            <span>{request.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {request.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+                          </div>
+                          
+                          {request.location && (
+                            <div className="flex items-center gap-1.5">
+                              <span>📍</span>
+                              <span className="font-medium">{request.location}</span>
+                            </div>
                           )}
                         </div>
-                        <div className="text-sm text-slate-600 space-y-1">
-                          <p><span className="font-medium">👤 Requester:</span> {request.requesterName}</p>
-                          {request.requesterEmail && <p><span className="font-medium">📧 Email:</span> {request.requesterEmail}</p>}
-                          <p><span className="font-medium">⏰ Time:</span> {request.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {request.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>
-                          <p><span className="font-medium">📅 Date:</span> {request.startDate.toDate().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-                          {request.location && <p><span className="font-medium">📍 Location:</span> {request.location}</p>}
-                          {request.description && <p className="mt-2 text-slate-700">{request.description}</p>}
-                        </div>
+                        
+                        {request.description && (
+                          <div className="mt-2 p-2 bg-white/60 rounded border border-yellow-200">
+                            <p className="text-xs text-slate-700 line-clamp-2">{request.description}</p>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex gap-2 flex-shrink-0">
+                      
+                      <div className="flex gap-2 pt-2 border-t border-yellow-200">
                         <button
                           onClick={() => request.id && handleApprove(request)}
                           disabled={processingId === request.id}
-                          className="flex items-center gap-1 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition duration-200 font-medium disabled:opacity-50"
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition duration-200 font-semibold shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-xs"
                           title="Approve and create activity"
                         >
                           {processingId === request.id ? (
-                            <Loader2 size={16} className="animate-spin" />
+                            <Loader2 size={14} className="animate-spin" />
                           ) : (
-                            <Check size={16} />
+                            <>
+                              <Check size={14} />
+                              <span>Approve</span>
+                            </>
                           )}
-                          <span className="hidden sm:inline">Approve</span>
                         </button>
                         <button
                           onClick={() => request.id && handleReject(request.id)}
                           disabled={processingId === request.id}
-                          className="flex items-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition duration-200 font-medium disabled:opacity-50"
+                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white rounded-lg transition duration-200 font-semibold shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-xs"
                           title="Reject request"
                         >
                           {processingId === request.id ? (
-                            <Loader2 size={16} className="animate-spin" />
+                            <Loader2 size={14} className="animate-spin" />
                           ) : (
-                            <X size={16} />
+                            <>
+                              <X size={14} />
+                              <span>Reject</span>
+                            </>
                           )}
-                          <span className="hidden sm:inline">Reject</span>
                         </button>
                       </div>
                     </div>
@@ -163,38 +192,51 @@ export const AdminRequestsPage = () => {
           {reviewedRequests.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold text-slate-800 mb-4">✓ Reviewed Requests ({reviewedRequests.length})</h3>
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {reviewedRequests.map((request) => (
-                  <div key={request.id} className={`rounded-lg p-4 border-l-4 shadow-sm ${
-                    request.status === 'approved' ? 'bg-green-50 border-l-green-400' : 'bg-red-50 border-l-red-400'
+                  <div key={request.id} className={`rounded-lg p-3 border-l-4 shadow-sm hover:shadow-md transition-all duration-200 ${
+                    request.status === 'approved' ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-green-500' : 'bg-gradient-to-r from-red-50 to-rose-50 border-l-red-500'
                   }`}>
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex flex-col gap-2">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-semibold text-slate-800">{request.title}</h4>
-                          <span className={`px-2 py-1 text-xs font-bold rounded-full ${
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-bold text-slate-800 text-sm">{request.title}</h4>
+                          <span className={`px-2 py-0.5 text-xs font-bold rounded-full shadow-sm ${
                             request.status === 'approved' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
+                              ? 'bg-green-500 text-white' 
+                              : 'bg-red-500 text-white'
                           }`}>
                             {request.status.toUpperCase()}
                           </span>
                         </div>
-                        <p className="text-sm text-slate-600 mt-1">
-                          {request.startDate.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · 
-                          {request.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-                        </p>
+                        <div className="space-y-1 text-xs text-slate-700">
+                          <div className="flex items-center gap-1.5">
+                            <span>📅</span>
+                            <span className="font-medium">{request.startDate.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span>⏰</span>
+                            <span className="font-medium">{request.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span>👤</span>
+                            <span className="font-medium">{request.requesterName}</span>
+                          </div>
+                        </div>
                       </div>
                       <button
                         onClick={() => request.id && handleDelete(request.id)}
                         disabled={processingId === request.id}
-                        className="flex items-center gap-1 px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition duration-200 font-medium disabled:opacity-50"
+                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg transition duration-200 font-semibold shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-xs mt-2 pt-2 border-t border-slate-200"
                         title="Delete request"
                       >
                         {processingId === request.id ? (
-                          <Loader2 size={16} className="animate-spin" />
+                          <Loader2 size={14} className="animate-spin" />
                         ) : (
-                          <Trash2 size={16} />
+                          <>
+                            <Trash2 size={14} />
+                            <span>Delete</span>
+                          </>
                         )}
                       </button>
                     </div>

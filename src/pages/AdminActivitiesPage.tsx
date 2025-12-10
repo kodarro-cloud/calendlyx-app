@@ -121,7 +121,7 @@ export const AdminActivitiesPage = () => {
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="mt-1 pl-3 pr-8 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm bg-white"
+              className="mt-1 pl-3 pr-10 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-300 text-sm bg-white cursor-pointer hover:border-blue-300 transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat"
             >
               <option value="all">All months</option>
               {monthOptions.map((opt) => (
@@ -171,46 +171,48 @@ export const AdminActivitiesPage = () => {
             {groupedByDate.map((group) => (
               <div key={group.date.toISOString()} className="bg-white/80 backdrop-blur-sm rounded-xl shadow p-4 border border-blue-100">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-slate-800">{group.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</h3>
+                  <h3 className="text-base font-semibold text-slate-800">{group.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</h3>
                   <span className="text-xs text-slate-500">{group.items.length} activit{group.items.length === 1 ? 'y' : 'ies'}</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {group.items.map((activity) => (
                     <div
                       key={activity.id}
                       className="p-3 rounded-lg border-l-4 border-l-blue-400 bg-blue-50/60 hover:shadow-md transition duration-200"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <h4 className="text-sm font-bold text-slate-700">{activity.type || activity.title}</h4>
-                          {activity.participant && (
-                            <p className="text-xs text-slate-500">👤 {activity.participant}</p>
-                          )}
-                          {activity.description && (
-                            <p className="text-slate-600 text-xs line-clamp-2 mt-1">{activity.description}</p>
-                          )}
-                          <div className="space-y-0.5 text-xs text-slate-600 mt-2">
-                            <div className="font-semibold text-slate-800">⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</div>
-                            {activity.location && (
-                              <div><span className="font-medium">📍</span> {activity.location}</div>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-sm font-bold text-slate-700 truncate">{activity.type || activity.title}</h4>
+                            {activity.participant && (
+                              <p className="text-xs text-slate-500 truncate">👤 {activity.participant}</p>
                             )}
                           </div>
+                          <div className="flex gap-1 flex-shrink-0">
+                            <button
+                              onClick={() => handleEditActivity(activity)}
+                              className="p-1 text-blue-600 hover:bg-blue-100 rounded-lg transition duration-200"
+                              title="Edit activity"
+                            >
+                              <Edit2 size={14} />
+                            </button>
+                            <button
+                              onClick={() => activity.id && handleDeleteClick(activity.id)}
+                              className="p-1 text-red-600 hover:bg-red-100 rounded-lg transition duration-200"
+                              title="Delete activity"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex gap-1">
-                          <button
-                            onClick={() => handleEditActivity(activity)}
-                            className="flex-shrink-0 p-1 text-blue-600 hover:bg-blue-100 rounded-lg transition duration-200"
-                            title="Edit activity"
-                          >
-                            <Edit2 size={16} />
-                          </button>
-                          <button
-                            onClick={() => activity.id && handleDeleteClick(activity.id)}
-                            className="flex-shrink-0 p-1 text-red-600 hover:bg-red-100 rounded-lg transition duration-200"
-                            title="Delete activity"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                        {activity.description && (
+                          <p className="text-slate-600 text-xs line-clamp-2">{activity.description}</p>
+                        )}
+                        <div className="space-y-0.5 text-xs text-slate-600">
+                          <div className="font-semibold text-slate-800">⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</div>
+                          {activity.location && (
+                            <div className="truncate"><span className="font-medium">📍</span> {activity.location}</div>
+                          )}
                         </div>
                       </div>
                     </div>

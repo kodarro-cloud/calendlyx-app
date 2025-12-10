@@ -61,7 +61,7 @@ export interface ScheduleRequest extends DocumentData {
   endDate: FirestoreTimestampType;
   location?: string;
   requesterName: string;
-  requesterEmail?: string;
+  requesterPhone?: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt?: FirestoreTimestampType;
   updatedAt?: FirestoreTimestampType;

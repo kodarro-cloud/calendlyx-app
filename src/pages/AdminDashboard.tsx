@@ -50,16 +50,6 @@ export const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               Activities
             </NavLink>
             <NavLink
-              to="/dashboard/calendar"
-              className={({ isActive }: { isActive: boolean }) => `px-6 py-3 rounded-lg font-semibold transition duration-200 ${
-                isActive
-                  ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-md'
-                  : 'bg-white/60 text-slate-600 hover:bg-white/80'
-              }`}
-            >
-              Calendar
-            </NavLink>
-            <NavLink
               to="/dashboard/requests"
               className={({ isActive }: { isActive: boolean }) => `px-6 py-3 rounded-lg font-semibold transition duration-200 ${
                 isActive
@@ -68,6 +58,16 @@ export const AdminDashboard = ({ onLogout }: AdminDashboardProps) => {
               }`}
             >
               Requests
+            </NavLink>
+            <NavLink
+              to="/dashboard/calendar"
+              className={({ isActive }: { isActive: boolean }) => `px-6 py-3 rounded-lg font-semibold transition duration-200 ${
+                isActive
+                  ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-md'
+                  : 'bg-white/60 text-slate-600 hover:bg-white/80'
+              }`}
+            >
+              Calendar
             </NavLink>
             <NavLink
               to="/dashboard/settings"

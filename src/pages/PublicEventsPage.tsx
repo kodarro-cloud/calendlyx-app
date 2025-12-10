@@ -151,6 +151,7 @@ export const PublicEventsPage = () => {
                     <div key={request.id} className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
                       <p className="font-semibold text-gray-900 text-sm truncate">{request.title}</p>
                       <p className="text-xs text-gray-600 mt-1">👤 {request.requesterName}</p>
+                      <p className="text-xs text-gray-600">📅 {request.startDate.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                       <p className="text-xs text-gray-600">⏰ {request.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p>
                       <p className="text-[10px] text-yellow-700 font-medium mt-1">Pending Review</p>
                     </div>
@@ -179,19 +180,19 @@ export const PublicEventsPage = () => {
                     <>
                       <h2 className="text-2xl font-bold text-slate-700 mb-6">{selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h2>
                       {displayActivities.length > 0 ? (
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {displayActivities.map((activity) => {
                             const isCurrent = categorized.current.some(a => a.id === activity.id);
                             return (
-                              <div key={activity.id} className={`p-4 rounded-lg border-l-4 transition shadow-sm hover:shadow-md bg-white/80 ${
+                              <div key={activity.id} className={`p-3 rounded-lg border-l-4 transition shadow-sm hover:shadow-md bg-white/80 ${
                                 isCurrent ? 'border-l-green-500' : 'border-l-blue-400'
                               }`}>
-                                <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-start justify-between gap-2">
                                   <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
-                                      <h3 className="font-semibold text-slate-900 text-base truncate">{activity.title}</h3>
+                                      <h3 className="font-semibold text-slate-900 text-sm truncate">{activity.title}</h3>
                                       {activity.type && (
-                                        <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[11px] font-semibold rounded">
+                                        <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-semibold rounded">
                                           {activity.type}
                                         </span>
                                       )}
@@ -235,14 +236,14 @@ export const PublicEventsPage = () => {
                         )}
                       </div>
                       {monthActivities.length > 0 ? (
-                        <div className="space-y-5">
+                        <div className="space-y-4">
                           {visibleMonthGroups.map(([date, dateActivities]) => (
                             <div key={date} className="bg-white/70 border border-blue-100 rounded-xl p-4 shadow-sm">
                               <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-lg font-bold text-slate-800">{date}</h3>
+                                <h3 className="text-base font-bold text-slate-800">{date}</h3>
                                 <span className="text-xs text-slate-500">{dateActivities.length} activit{dateActivities.length === 1 ? 'y' : 'ies'}</span>
                               </div>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 {dateActivities.map((activity) => {
                                   const isCurrent = categorized.current.some(a => a.id === activity.id);
                                   return (
@@ -250,23 +251,23 @@ export const PublicEventsPage = () => {
                                       key={activity.id}
                                       className="p-3 rounded-lg border-l-4 border-l-blue-400 bg-blue-50/60 hover:shadow-md transition duration-200"
                                     >
-                                      <div className="flex items-start justify-between gap-2">
-                                        <div className="flex-1">
-                                          <h4 className="text-sm font-bold text-slate-700">{activity.title}</h4>
-                                          {activity.description && (
-                                            <p className="text-slate-600 text-xs line-clamp-2 mt-1">{activity.description}</p>
-                                          )}
-                                          <div className="space-y-0.5 text-xs text-slate-600 mt-2">
-                                            <div className="font-semibold text-slate-800">
-                                              ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
-                                            </div>
-                                            {activity.type && <div><span className="font-medium">•</span> {activity.type}</div>}
-                                            {activity.location && (
-                                              <div><span className="font-medium">📍</span> {activity.location}</div>
-                                            )}
-                                          </div>
+                                      <div className="flex flex-col gap-2">
+                                        <div className="flex items-start justify-between gap-2">
+                                          <h4 className="text-sm font-bold text-slate-700 flex-1">{activity.title}</h4>
+                                          {isCurrent && <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[10px] font-bold rounded-full whitespace-nowrap">LIVE</span>}
                                         </div>
-                                        {isCurrent && <span className="px-2 py-0.5 bg-green-100 text-green-800 text-[10px] font-bold rounded-full">LIVE</span>}
+                                        {activity.description && (
+                                          <p className="text-slate-600 text-xs line-clamp-2">{activity.description}</p>
+                                        )}
+                                        <div className="space-y-0.5 text-xs text-slate-600">
+                                          <div className="font-semibold text-slate-800">
+                                            ⏰ {activity.startDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} → {activity.endDate.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                          </div>
+                                          {activity.type && <div><span className="font-medium">•</span> {activity.type}</div>}
+                                          {activity.location && (
+                                            <div><span className="font-medium">📍</span> {activity.location}</div>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
                                   );
